@@ -1,0 +1,15 @@
+.git
+node_modules
+vendor
+mobile
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*
+.env
+.env.*
+!.env.example
+tests
+docs
+*.md
