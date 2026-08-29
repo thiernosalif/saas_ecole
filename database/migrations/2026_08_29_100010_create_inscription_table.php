@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('inscription', function (Blueprint $table) {
+            $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
+            $table->string('tenant_id', 50);
+            $table->foreignUuid('eleve_id')->constrained('personne');
+            $table->foreignUuid('classe_id')->constrained('classe');
+            $table->foreignUuid('annee_id')->constrained('annee_scolaire');
+            $table->string('statut', 20)->default('ACTIVE');
+            $table->date('date_inscription');
+            $table->decimal('frais_inscription', 10, 2)->nullable();
+            $table->timestampTz('created_at')->useCurrent();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('inscription');
+    }
+};

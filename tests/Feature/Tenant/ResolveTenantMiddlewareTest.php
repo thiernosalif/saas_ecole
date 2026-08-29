@@ -3,26 +3,15 @@
 declare(strict_types=1);
 
 use App\Domain\SuperAdmin\Models\Etablissement;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Schema;
+
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    Schema::create('etablissement', function (Blueprint $table) {
-        $table->id();
-        $table->string('tenant_id')->unique();
-        $table->string('nom');
-        $table->string('sous_domaine')->unique();
-        $table->string('statut')->default('ACTIF');
-    });
-
     Route::middleware('resolve.tenant')->get('/__test/resolve-tenant', function () {
         return response()->json(['tenant_id' => app('currentTenantId')]);
     });
-});
-
-afterEach(function () {
-    Schema::dropIfExists('etablissement');
 });
 
 // Le client de test construit l'URL de requête via url() (config('app.url')), qui
