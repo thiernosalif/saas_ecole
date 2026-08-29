@@ -1,5 +1,7 @@
 <?php
 
+use App\Domain\Notes\Http\Controllers\BulletinController;
+use App\Domain\Notes\Http\Controllers\NoteController;
 use App\Domain\Scolarite\Http\Controllers\AbsenceController;
 use App\Domain\Scolarite\Http\Controllers\ClasseController;
 use App\Domain\Scolarite\Http\Controllers\EleveController;
@@ -34,4 +36,8 @@ Route::middleware(['auth:sanctum', 'resolve.tenant'])->prefix('v1')->group(funct
 
     Route::post('absences', [AbsenceController::class, 'store']);
     Route::get('absences', [AbsenceController::class, 'index']); // ?eleve_id=
+
+    Route::apiResource('notes', NoteController::class)->only(['store', 'index']);
+    Route::post('bulletins/generer', [BulletinController::class, 'generer']);
+    Route::get('bulletins/{bulletin}/pdf', [BulletinController::class, 'pdf']);
 });
