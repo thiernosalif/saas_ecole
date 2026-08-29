@@ -11,14 +11,15 @@ use Spatie\Permission\PermissionRegistrar;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    app(PermissionRegistrar::class)->setPermissionsTeamId('ecole-a');
+    // team_id = etablissement.id (bigint/uuid PK), pas le slug tenant_id — cf. ResolveTenant.
+    app(PermissionRegistrar::class)->setPermissionsTeamId(1);
 
     Route::middleware(['web', 'role:ECOLE_ADMIN'])->get('/__test/ensure-role', fn () => response()->json(['ok' => true]));
 });
 
 it('allows access when the user has the required role', function () {
     $user = User::factory()->create();
-    Role::create(['name' => 'ECOLE_ADMIN', 'guard_name' => 'web', 'team_id' => 'ecole-a']);
+    Role::create(['name' => 'ECOLE_ADMIN', 'guard_name' => 'web', 'team_id' => 1]);
     $user->assignRole('ECOLE_ADMIN');
 
     $this->actingAs($user)
@@ -28,7 +29,7 @@ it('allows access when the user has the required role', function () {
 
 it('denies access with a 403 when the user lacks the required role', function () {
     $user = User::factory()->create();
-    Role::create(['name' => 'PROF', 'guard_name' => 'web', 'team_id' => 'ecole-a']);
+    Role::create(['name' => 'PROF', 'guard_name' => 'web', 'team_id' => 1]);
     $user->assignRole('PROF');
 
     $this->actingAs($user)

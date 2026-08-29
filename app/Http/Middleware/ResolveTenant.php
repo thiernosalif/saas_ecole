@@ -27,7 +27,10 @@ class ResolveTenant
         app()->instance('currentTenant', $tenant);
         app()->instance('currentTenantId', $tenant->tenant_id);
 
-        app(PermissionRegistrar::class)->setPermissionsTeamId($tenant->tenant_id);
+        // Le "team" spatie est un concept distinct : il est scopé sur etablissement.id
+        // (la PK), pas sur le slug tenant_id — cf. §3.3, cohérent avec le type de colonne
+        // team_id (bigint/uuid) généré par la migration spatie, pas VARCHAR.
+        app(PermissionRegistrar::class)->setPermissionsTeamId($tenant->id);
 
         return $next($request);
     }
