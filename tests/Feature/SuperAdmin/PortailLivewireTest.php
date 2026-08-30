@@ -93,6 +93,43 @@ it('change d’onglet et met à jour les informations d’une école', function 
         ->ville->toBe('Thiès');
 });
 
+it('initialise les modules actifs depuis le plan puis permet de les surcharger par école', function () {
+    $superAdmin = creerSuperAdminPourPortail();
+    $plan = PlanTarifaire::create([
+        'nom' => 'Standard',
+        'prix_mensuel' => 35000,
+        'actif' => true,
+        'modules_inclus' => ['scolarite', 'notes', 'absences', 'planning', 'comptabilite'],
+    ]);
+    $etablissement = creerEtablissementPourPortail('ecole-modules');
+    $etablissement->update(['plan_id' => $plan->id]);
+
+    Livewire::actingAs($superAdmin)
+        ->test(EcoleDetail::class, ['etablissement' => $etablissement->fresh()])
+        ->assertSet('modulesActifs', ['scolarite', 'notes', 'absences', 'planning', 'comptabilite'])
+        ->set('modulesActifs', ['scolarite', 'notes'])
+        ->call('updateAbonnement')
+        ->assertHasNoErrors();
+
+    expect($etablissement->fresh()->modules_actifs)->toBe(['scolarite', 'notes']);
+});
+
+it('active tous les modules par défaut pour un plan "all"', function () {
+    $superAdmin = creerSuperAdminPourPortail();
+    $plan = PlanTarifaire::create([
+        'nom' => 'Reseau',
+        'prix_mensuel' => 150000,
+        'actif' => true,
+        'modules_inclus' => ['all'],
+    ]);
+    $etablissement = creerEtablissementPourPortail('ecole-reseau');
+    $etablissement->update(['plan_id' => $plan->id]);
+
+    Livewire::actingAs($superAdmin)
+        ->test(EcoleDetail::class, ['etablissement' => $etablissement->fresh()])
+        ->assertSet('modulesActifs', EcoleDetail::MODULES_DISPONIBLES);
+});
+
 it('suspend puis réactive une école depuis l’onglet accès', function () {
     Notification::fake();
     $superAdmin = creerSuperAdminPourPortail();

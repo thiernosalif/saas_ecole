@@ -84,7 +84,7 @@ class EcoleService
         $etablissement->update(Arr::only($data, [
             'nom', 'adresse', 'telephone', 'telephone_ecole', 'email',
             'contact_directeur', 'ville', 'pays', 'plan_id',
-            'nb_eleves_max', 'stockage_max_go',
+            'nb_eleves_max', 'stockage_max_go', 'modules_actifs',
         ]));
 
         return $etablissement->fresh();

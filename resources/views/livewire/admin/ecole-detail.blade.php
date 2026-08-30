@@ -89,6 +89,30 @@
             <x-ui.input name="nb_eleves_max" type="number" label="Nombre d'élèves max" wire:model="nb_eleves_max" />
             <x-ui.input name="stockage_max_go" type="number" label="Stockage max (Go)" wire:model="stockage_max_go" />
 
+            <div>
+                <label class="mb-1 block text-sm font-medium text-zinc-700">Modules actifs</label>
+                <p class="mb-2 text-xs text-zinc-500">
+                    Inclus dans le plan {{ $etablissement->plan?->nom ?? 'actuel' }} :
+                    {{ $modulesDuPlan ? implode(', ', $modulesDuPlan) : 'aucun' }}.
+                    Décochez ou ajoutez pour surcharger, école par école.
+                </p>
+
+                <div class="grid grid-cols-2 gap-2">
+                    @foreach (\App\Domain\SuperAdmin\Livewire\EcoleDetail::MODULES_DISPONIBLES as $module)
+                        <label class="flex items-center gap-2 text-sm text-zinc-700">
+                            <input
+                                type="checkbox"
+                                value="{{ $module }}"
+                                wire:model="modulesActifs"
+                                class="size-4 rounded border-zinc-300 text-zinc-800 focus:ring-zinc-800/20"
+                            />
+                            {{ ucfirst($module) }}
+                        </label>
+                    @endforeach
+                </div>
+                @error('modulesActifs') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+            </div>
+
             <flux:button type="submit" variant="filled">Enregistrer</flux:button>
         </form>
 

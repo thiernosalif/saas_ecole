@@ -24,6 +24,14 @@ class EcoleDetail extends Component
 
     private const ONGLETS = ['infos', 'personnalisation', 'abonnement', 'stats', 'acces'];
 
+    /**
+     * Modules disponibles à la carte (§15.3) — "all" (plan Réseau) n'est pas une
+     * case à cocher, il vaut juste "tous les modules ci-dessous par défaut".
+     */
+    public const MODULES_DISPONIBLES = [
+        'scolarite', 'notes', 'absences', 'planning', 'comptabilite', 'documents', 'notifications',
+    ];
+
     public Etablissement $etablissement;
 
     public string $activeTab = 'infos';
@@ -62,6 +70,9 @@ class EcoleDetail extends Component
     public int $nb_eleves_max = 300;
 
     public int $stockage_max_go = 5;
+
+    /** @var array<int, string> */
+    public array $modulesActifs = [];
 
     // Onglet accès
     public bool $confirmingSuspend = false;
@@ -121,13 +132,20 @@ class EcoleDetail extends Component
 
     public function updateAbonnement(EcoleService $ecoles): void
     {
-        $data = $this->validate([
+        $validated = $this->validate([
             'plan_id' => ['nullable', 'uuid', 'exists:plan_tarifaire,id'],
             'nb_eleves_max' => ['required', 'integer', 'min:1'],
             'stockage_max_go' => ['required', 'integer', 'min:1'],
+            'modulesActifs' => ['array'],
+            'modulesActifs.*' => ['string', 'in:'.implode(',', self::MODULES_DISPONIBLES)],
         ]);
 
-        $this->etablissement = $ecoles->mettreAJour($this->etablissement, $data)->load('plan');
+        $this->etablissement = $ecoles->mettreAJour($this->etablissement, [
+            'plan_id' => $validated['plan_id'],
+            'nb_eleves_max' => $validated['nb_eleves_max'],
+            'stockage_max_go' => $validated['stockage_max_go'],
+            'modules_actifs' => $validated['modulesActifs'],
+        ])->load('plan');
 
         session()->flash('success', 'Abonnement mis à jour.');
     }
@@ -187,6 +205,20 @@ class EcoleDetail extends Component
         $this->plan_id = $this->etablissement->plan_id;
         $this->nb_eleves_max = $this->etablissement->nb_eleves_max ?? 300;
         $this->stockage_max_go = $this->etablissement->stockage_max_go ?? 5;
+
+        // modules_actifs est une surcharge par école (§15.1) : tant qu'elle n'a
+        // jamais été définie, on part des modules inclus dans le plan actuel.
+        $this->modulesActifs = $this->etablissement->modules_actifs ?? $this->modulesDuPlan();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function modulesDuPlan(): array
+    {
+        $inclus = $this->etablissement->plan?->modules_inclus ?? [];
+
+        return in_array('all', $inclus, true) ? self::MODULES_DISPONIBLES : $inclus;
     }
 
     public function render(): View
@@ -197,6 +229,7 @@ class EcoleDetail extends Component
             'nbElevesActuel' => Personne::withoutTenant()->eleves()
                 ->where('tenant_id', $this->etablissement->tenant_id)
                 ->count(),
+            'modulesDuPlan' => $this->modulesDuPlan(),
         ]);
     }
 }
