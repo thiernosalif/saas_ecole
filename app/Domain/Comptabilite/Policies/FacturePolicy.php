@@ -11,7 +11,7 @@ class FacturePolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'PARENT', 'ELEVE']);
+        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'COMPTABLE', 'PARENT', 'ELEVE']);
     }
 
     public function view(User $user, Facture $facture): bool
@@ -24,11 +24,11 @@ class FacturePolicy
             return $user->personne_id === $facture->eleve_id;
         }
 
-        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE']);
+        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'COMPTABLE']);
     }
 
     public function create(User $user): bool
     {
-        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE']);
+        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'COMPTABLE']);
     }
 }

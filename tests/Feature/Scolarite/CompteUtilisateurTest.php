@@ -25,7 +25,7 @@ function creerEcoleAvecStaffRoles(string $slug): Etablissement
 
     app(PermissionRegistrar::class)->setPermissionsTeamId($etablissement->id);
 
-    foreach (['ECOLE_ADMIN', 'SCOLARITE', 'PROF'] as $role) {
+    foreach (['ECOLE_ADMIN', 'SCOLARITE', 'PROF', 'COMPTABLE', 'SECRETAIRE'] as $role) {
         Role::create(['name' => $role, 'guard_name' => 'web', 'team_id' => $etablissement->id]);
     }
 
@@ -59,6 +59,30 @@ it('permet à un ECOLE_ADMIN de créer un compte PROF avec Personne + User + not
 
     Notification::assertSentTo($user, IdentifiantsCompteStaff::class);
 });
+
+it('permet à un ECOLE_ADMIN de créer un compte COMPTABLE ou SECRETAIRE (Personne type=STAFF)', function (string $role) {
+    Notification::fake();
+
+    $ecole = creerEcoleAvecStaffRoles('ecole-a');
+    $admin = User::factory()->create(['tenant_id' => $ecole->tenant_id]);
+    $admin->assignRole('ECOLE_ADMIN');
+
+    Sanctum::actingAs($admin, ['*']);
+
+    $response = $this->postJson('http://ecole-a.plateforme.sn.localhost/api/v1/comptes', [
+        'nom' => 'Sow',
+        'prenom' => 'Ibrahima',
+        'email' => strtolower($role).'@ecole-a.test',
+        'role' => $role,
+    ])->assertCreated();
+
+    $user = User::find($response->json('data.id'));
+
+    expect($user->personne->type)->toBe(Personne::TYPE_STAFF)
+        ->and($user->hasRole($role))->toBeTrue();
+
+    Notification::assertSentTo($user, IdentifiantsCompteStaff::class);
+})->with(['COMPTABLE', 'SECRETAIRE']);
 
 it('ne liste que les comptes staff du tenant courant', function () {
     $ecole = creerEcoleAvecStaffRoles('ecole-a');

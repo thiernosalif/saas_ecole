@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\SuperAdmin\Console\Commands\CheckAbonnementsCommand;
+use App\Domain\SuperAdmin\Console\Commands\SyncRolesDefautCommand;
 use App\Domain\SuperAdmin\Http\Middleware\EnsurePlatformTeam;
 use App\Http\Middleware\EnsureModuleActif;
 use App\Http\Middleware\EnsureRole;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withCommands([
         CheckAbonnementsCommand::class,
+        SyncRolesDefautCommand::class,
     ])
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([

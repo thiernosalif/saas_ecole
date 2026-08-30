@@ -52,7 +52,7 @@ class ComptesListe extends Component
             'prenom' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:150', 'unique:users,email'],
             'telephone' => ['nullable', 'string', 'max:20'],
-            'role' => ['required', 'string', 'in:PROF,SCOLARITE'],
+            'role' => ['required', 'string', 'in:PROF,SCOLARITE,COMPTABLE,SECRETAIRE'],
         ];
     }
 

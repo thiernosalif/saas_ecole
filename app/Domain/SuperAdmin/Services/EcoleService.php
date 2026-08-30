@@ -21,7 +21,7 @@ use Spatie\Permission\PermissionRegistrar;
  */
 class EcoleService
 {
-    private const ROLES_PAR_DEFAUT = ['ECOLE_ADMIN', 'SCOLARITE', 'PROF'];
+    private const ROLES_PAR_DEFAUT = ['ECOLE_ADMIN', 'SCOLARITE', 'PROF', 'COMPTABLE', 'SECRETAIRE'];
 
     public function creerEcole(array $data): Etablissement
     {

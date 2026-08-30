@@ -104,6 +104,8 @@
                 <select wire:model="role" class="mt-1 w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm">
                     <option value="PROF">Professeur</option>
                     <option value="SCOLARITE">Scolarité</option>
+                    <option value="COMPTABLE">Comptable</option>
+                    <option value="SECRETAIRE">Secrétaire</option>
                 </select>
                 @error('role') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>

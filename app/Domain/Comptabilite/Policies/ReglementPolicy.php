@@ -11,7 +11,7 @@ class ReglementPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'PARENT', 'ELEVE']);
+        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'COMPTABLE', 'PARENT', 'ELEVE']);
     }
 
     public function view(User $user, Reglement $reglement): bool
@@ -26,7 +26,7 @@ class ReglementPolicy
             return $user->personne_id === $eleve->id;
         }
 
-        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE']);
+        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'COMPTABLE']);
     }
 
     /**
@@ -36,6 +36,6 @@ class ReglementPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE']);
+        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'COMPTABLE']);
     }
 }

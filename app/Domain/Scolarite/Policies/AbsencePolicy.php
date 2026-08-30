@@ -10,11 +10,11 @@ class AbsencePolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'PROF', 'PARENT', 'ELEVE']);
+        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'PROF', 'SECRETAIRE', 'PARENT', 'ELEVE']);
     }
 
     public function create(User $user): bool
     {
-        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'PROF']);
+        return $user->hasAnyRole(['ECOLE_ADMIN', 'SCOLARITE', 'PROF', 'SECRETAIRE']);
     }
 }

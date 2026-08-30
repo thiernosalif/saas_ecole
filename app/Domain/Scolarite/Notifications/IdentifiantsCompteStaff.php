@@ -34,7 +34,12 @@ class IdentifiantsCompteStaff extends Notification implements ShouldQueue
             config('app.tenant_central_domain'),
         );
 
-        $libelleRole = $this->role === 'PROF' ? 'Professeur' : 'Scolarité';
+        $libelleRole = match ($this->role) {
+            'PROF' => 'Professeur',
+            'COMPTABLE' => 'Comptable',
+            'SECRETAIRE' => 'Secrétaire',
+            default => 'Scolarité',
+        };
 
         return (new MailMessage)
             ->subject("Votre compte sur la plateforme — {$this->etablissement->nom}")
