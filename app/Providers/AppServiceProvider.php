@@ -2,7 +2,13 @@
 
 namespace App\Providers;
 
+use App\Domain\Scolarite\Livewire\AbsenceSaisie;
+use App\Domain\Scolarite\Livewire\ClassesListe;
+use App\Domain\Scolarite\Livewire\EleveForm;
+use App\Domain\Scolarite\Livewire\ElevesListe;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +25,25 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Livewire's auto-discovery only resolves classes under config('livewire.class_namespace')
+        // ("App\Livewire"). Our components live under app/Domain/*/Livewire (§4.2) instead, so the
+        // initial full-page GET renders fine (resolved directly by class via the route), but every
+        // subsequent AJAX update fails to re-resolve the component by its snapshot name and Livewire
+        // reports it as a stale "release token" mismatch (419 Page Expired) instead of a clear error.
+        // Registering an explicit alias here makes name<->class resolution symmetric in both directions.
+        Livewire::component('eleves-liste', ElevesListe::class);
+        Livewire::component('eleve-form', EleveForm::class);
+        Livewire::component('classes-liste', ClassesListe::class);
+        Livewire::component('absence-saisie', AbsenceSaisie::class);
+
+        // Livewire's own /livewire/update route only carries the base 'web' middleware
+        // (cf. HandleRequests::boot()), so it never runs ResolveTenant — every AJAX
+        // update (search, wire:click actions, re-renders) was executing without
+        // app('currentTenantId') bound and without spatie's team context set, silently
+        // hiding role-gated buttons and breaking $this->authorize() in action methods.
+        // 'role' is deliberately NOT added here: this route is shared by every Livewire
+        // component in the app, and role scoping already happens per-page in web.php.
+        Livewire::setUpdateRoute(fn ($handle) => Route::post('/livewire/update', $handle)
+            ->middleware(['web', 'auth', 'resolve.tenant']));
     }
 }
