@@ -31,6 +31,13 @@ class Etablissement extends Model
      */
     public const PLATFORM_TEAM_ID = '00000000-0000-0000-0000-000000000000';
 
+    /**
+     * Module optionnel (§15.1 "Modules & limites") : active l'intégration
+     * Wave/Orange Money pour les parents de cette école. Le paiement en
+     * espèces (§Session 11) ne dépend d'aucun module — il est toujours actif.
+     */
+    public const MODULE_PAIEMENT_MOBILE_MONEY = 'paiement_mobile_money';
+
     protected $table = 'etablissement';
 
     /**
@@ -87,5 +94,14 @@ class Etablissement extends Model
     public function reglementsSaas(): HasMany
     {
         return $this->hasMany(ReglementSaas::class, 'etablissement_id');
+    }
+
+    /**
+     * Vérifie explicitement un module optionnel (`modules_actifs`, §15.1)
+     * plutôt que de disperser des `in_array()` dans les controllers/services.
+     */
+    public function aModule(string $module): bool
+    {
+        return in_array($module, $this->modules_actifs ?? [], true);
     }
 }

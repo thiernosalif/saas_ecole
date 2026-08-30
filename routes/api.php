@@ -1,5 +1,7 @@
 <?php
 
+use App\Domain\Comptabilite\Http\Controllers\FactureController;
+use App\Domain\Comptabilite\Http\Controllers\ReglementController;
 use App\Domain\Notes\Http\Controllers\BulletinController;
 use App\Domain\Notes\Http\Controllers\NoteController;
 use App\Domain\Planning\Http\Controllers\DevoirController;
@@ -54,4 +56,11 @@ Route::middleware(['auth:sanctum', 'resolve.tenant'])->prefix('v1')->group(funct
 
     Route::apiResource('examens', ExamenController::class)->only(['index', 'show', 'store', 'update']);
     Route::apiResource('devoirs', DevoirController::class)->only(['index', 'show', 'store', 'update']);
+
+    // Module Comptabilite (cf. PROJET_LARAVEL.md §4.2, Session 11) : chemin
+    // par défaut espèces/chèque/virement, aucune dépendance externe. Le
+    // paiement en ligne (Wave/Orange Money, module `paiement_mobile_money`)
+    // a ses propres routes, ajoutées séparément une fois le webhook conçu.
+    Route::apiResource('factures', FactureController::class)->only(['index', 'show', 'store']);
+    Route::apiResource('factures.reglements', ReglementController::class)->shallow()->only(['index', 'show', 'store']);
 });
