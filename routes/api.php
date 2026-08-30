@@ -2,6 +2,9 @@
 
 use App\Domain\Notes\Http\Controllers\BulletinController;
 use App\Domain\Notes\Http\Controllers\NoteController;
+use App\Domain\Planning\Http\Controllers\DevoirController;
+use App\Domain\Planning\Http\Controllers\EmploiDuTempsController;
+use App\Domain\Planning\Http\Controllers\ExamenController;
 use App\Domain\Scolarite\Http\Controllers\AbsenceController;
 use App\Domain\Scolarite\Http\Controllers\ClasseController;
 use App\Domain\Scolarite\Http\Controllers\EleveController;
@@ -40,4 +43,15 @@ Route::middleware(['auth:sanctum', 'resolve.tenant'])->prefix('v1')->group(funct
     Route::apiResource('notes', NoteController::class)->only(['store', 'index']);
     Route::post('bulletins/generer', [BulletinController::class, 'generer']);
     Route::get('bulletins/{bulletin}/pdf', [BulletinController::class, 'pdf']);
+
+    // Module Planning (cf. PROJET_LARAVEL.md §4.2) : "emploi-du-temps" ne
+    // correspond à aucun nom de modèle (le modèle sous-jacent est Seance),
+    // d'où des routes explicites plutôt qu'un apiResource.
+    Route::get('emploi-du-temps', [EmploiDuTempsController::class, 'index']); // ?classe_id=|prof_id=
+    Route::get('emploi-du-temps/{seance}', [EmploiDuTempsController::class, 'show']);
+    Route::post('emploi-du-temps', [EmploiDuTempsController::class, 'store']);
+    Route::put('emploi-du-temps/{seance}', [EmploiDuTempsController::class, 'update']); // déplacement
+
+    Route::apiResource('examens', ExamenController::class)->only(['index', 'show', 'store', 'update']);
+    Route::apiResource('devoirs', DevoirController::class)->only(['index', 'show', 'store', 'update']);
 });
