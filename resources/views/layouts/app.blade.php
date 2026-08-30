@@ -41,6 +41,20 @@
                         Emploi du temps
                     </a>
                 @endcan
+
+                @can('viewAny', \App\Domain\Planning\Models\Devoir::class)
+                    <a href="{{ route('planning.devoirs.index') }}"
+                       class="block rounded-lg px-3 py-2 {{ request()->routeIs('planning.devoirs.*') ? 'bg-zinc-800/5 font-medium text-zinc-900' : 'text-zinc-600 hover:bg-zinc-800/5' }}">
+                        Devoirs
+                    </a>
+                @endcan
+
+                @can('viewAny', \App\Domain\Planning\Models\Examen::class)
+                    <a href="{{ route('planning.examens.index') }}"
+                       class="block rounded-lg px-3 py-2 {{ request()->routeIs('planning.examens.*') ? 'bg-zinc-800/5 font-medium text-zinc-900' : 'text-zinc-600 hover:bg-zinc-800/5' }}">
+                        Examens
+                    </a>
+                @endcan
             </nav>
         </aside>
 

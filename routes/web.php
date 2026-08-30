@@ -1,7 +1,9 @@
 <?php
 
 use App\Domain\Notes\Livewire\NotesSaisie;
+use App\Domain\Planning\Livewire\DevoirsListe;
 use App\Domain\Planning\Livewire\EmploiDuTemps;
+use App\Domain\Planning\Livewire\ExamensListe;
 use App\Domain\Scolarite\Livewire\AbsenceSaisie;
 use App\Domain\Scolarite\Livewire\ClassesListe;
 use App\Domain\Scolarite\Livewire\ComptesListe;
@@ -28,6 +30,10 @@ Route::middleware(['auth', 'resolve.tenant', 'user.actif', 'role:ECOLE_ADMIN,SCO
     Route::get('/notes/saisie', NotesSaisie::class)->name('notes.saisie');
 
     Route::get('/emploi-du-temps', EmploiDuTemps::class)->name('planning.emploi-du-temps.index');
+
+    Route::get('/devoirs', DevoirsListe::class)->name('planning.devoirs.index');
+
+    Route::get('/examens', ExamensListe::class)->name('planning.examens.index');
 });
 
 // Gestion des comptes staff (PROF, SCOLARITE) : pouvoir du directeur uniquement,
