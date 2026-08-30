@@ -61,7 +61,13 @@ it('n’affiche que les élèves du tenant résolu depuis le sous-domaine sur la
         ->get('http://ecole-a.plateforme.sn.localhost/eleves')
         ->assertOk()
         ->assertSee('Diop')
-        ->assertDontSee('Ba');
+        // 'Ba' seul est trop court : le token CSRF (40 caractères alphanumériques
+        // aléatoires, injecté deux fois dans la page par @csrf et par les data-csrf
+        // de Livewire) contient parfois la sous-chaîne "Ba" par pur hasard, ce qui
+        // faisait échouer ce test de façon intermittente sans rapport avec une
+        // fuite de tenant réelle. 'Moussa' est un identifiant assez long pour que
+        // cette collision soit négligeable.
+        ->assertDontSee('Moussa');
 });
 
 it('redirige un visiteur non authentifié vers la connexion', function () {
