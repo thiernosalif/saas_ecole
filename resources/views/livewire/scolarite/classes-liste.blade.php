@@ -1,4 +1,10 @@
 <div>
+    @if (session('success'))
+        <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <div class="mb-6 flex items-center justify-between">
         <h1 class="text-xl font-semibold text-zinc-800">Classes</h1>
 

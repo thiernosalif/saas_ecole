@@ -1,4 +1,10 @@
 <div class="max-w-3xl">
+    @if (session('success'))
+        <div class="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <h1 class="mb-6 text-xl font-semibold text-zinc-800">Saisie des absences</h1>
 
     <div class="mb-6 grid grid-cols-2 gap-4">

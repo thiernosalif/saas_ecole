@@ -76,6 +76,13 @@ class ClassesListe extends Component
     {
         $data = $this->validate();
 
+        // capacite_max a un DEFAULT 45 en base mais n'est pas nullable (migration Session 3) :
+        // un create()/update() avec la clé explicitement à null écrase le default et viole la
+        // contrainte NOT NULL. On omet la clé pour laisser Postgres appliquer le default.
+        if ($data['capacite_max'] === null) {
+            unset($data['capacite_max']);
+        }
+
         if ($this->editingId) {
             $classe = Classe::findOrFail($this->editingId);
             $this->authorize('update', $classe);
