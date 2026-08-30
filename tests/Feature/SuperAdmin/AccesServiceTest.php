@@ -8,6 +8,7 @@ use App\Domain\SuperAdmin\Services\AccesService;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -68,4 +69,27 @@ it('réactive une école suspendue et restaure immédiatement l’accès', funct
     $this->actingAs($directeur)
         ->get('http://ecole-reactivee.plateforme.sn.localhost/eleves')
         ->assertOk();
+});
+
+/**
+ * Bug trouvé en Session 9 en câblant l'onglet "accès" du portail : archiver()
+ * mettait bien statut = ARCHIVE mais ne révoquait pas les tokens Sanctum
+ * actifs (contrairement à suspendre()), et ResolveTenant ne bloquait que
+ * SUSPENDU — une école archivée gardait donc un accès web totalement
+ * fonctionnel, alors que §15.4 exige un accès "définitivement coupé".
+ */
+it('archive une école, révoque ses tokens actifs et bloque l’accès au sous-domaine, comme une suspension', function () {
+    Storage::fake('s3');
+    [$etablissement, $directeur] = creerEcoleAvecDirecteur('ecole-archivee-acces');
+    $directeur->createToken('mobile');
+
+    $etablissement = app(AccesService::class)->archiver($etablissement);
+
+    expect($etablissement->statut)->toBe(Etablissement::STATUT_ARCHIVE)
+        ->and($etablissement->date_resiliation)->not->toBeNull()
+        ->and($directeur->fresh()->tokens()->count())->toBe(0);
+
+    $this->actingAs($directeur)
+        ->get('http://ecole-archivee-acces.plateforme.sn.localhost/eleves')
+        ->assertForbidden();
 });

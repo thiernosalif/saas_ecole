@@ -48,3 +48,15 @@ it('returns 403 when the school is suspended', function () {
     $this->get('http://ecole-suspendue.plateforme.sn.localhost/__test/resolve-tenant')
         ->assertForbidden();
 });
+
+it('returns 403 when the school is archived', function () {
+    Etablissement::create([
+        'tenant_id' => 'ecole-archivee',
+        'nom' => 'École Archivée',
+        'sous_domaine' => 'ecole-archivee',
+        'statut' => 'ARCHIVE',
+    ]);
+
+    $this->get('http://ecole-archivee.plateforme.sn.localhost/__test/resolve-tenant')
+        ->assertForbidden();
+});

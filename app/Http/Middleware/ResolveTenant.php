@@ -20,7 +20,11 @@ class ResolveTenant
         // pas de withoutTenant() à appeler, il n'y a pas de TenantScope à contourner.
         $tenant = Etablissement::where('sous_domaine', $subdomain)->firstOrFail();
 
-        abort_if($tenant->statut === 'SUSPENDU', 403, 'École suspendue.');
+        // ARCHIVE (§15.4, J+60) doit couper l'accès aussi définitivement que SUSPENDU —
+        // ce n'était pas le cas avant : seul SUSPENDU était vérifié ici, alors qu'une
+        // école archivée conservait un accès web totalement fonctionnel.
+        abort_if($tenant->statut === Etablissement::STATUT_SUSPENDU, 403, 'École suspendue.');
+        abort_if($tenant->statut === Etablissement::STATUT_ARCHIVE, 403, 'École archivée, accès définitivement coupé.');
 
         // currentTenantId = etablissement.tenant_id (le slug), pas etablissement.id (PK) :
         // les tables métier référencent etablissement(tenant_id), cf. PROJET_LARAVEL.md §5.2.

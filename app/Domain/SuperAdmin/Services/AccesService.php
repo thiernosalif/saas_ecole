@@ -56,6 +56,11 @@ class AccesService
                 'date_resiliation' => now(),
             ]);
 
+            // Comme pour suspendre() : l'accès web est de toute façon bloqué à la
+            // prochaine requête par ResolveTenant, mais les tokens Sanctum mobiles
+            // existants restent valides tant qu'ils ne sont pas révoqués explicitement.
+            $this->revoquerSessionsActives($etablissement);
+
             return $etablissement->fresh();
         });
     }
