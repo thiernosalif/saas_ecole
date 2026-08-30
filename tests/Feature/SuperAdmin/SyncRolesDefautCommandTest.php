@@ -11,8 +11,8 @@ use Spatie\Permission\PermissionRegistrar;
 uses(RefreshDatabase::class);
 
 /**
- * Simule une école créée avant l'ajout de COMPTABLE/SECRETAIRE à
- * EcoleService::ROLES_PAR_DEFAUT (Session 14, extension) : seuls les 3
+ * Simule une école créée avant l'ajout de COMPTABLE/SECRETAIRE puis de
+ * PARENT/ELEVE à EcoleService::ROLES_PAR_DEFAUT (Session 14) : seuls les 3
  * anciens rôles existent pour son team_id.
  */
 it('crée les rôles manquants sur une école existante sans toucher aux rôles déjà là', function () {
@@ -29,8 +29,8 @@ it('crée les rôles manquants sur une école existante sans toucher aux rôles 
 
     $noms = Role::where('team_id', $etablissement->id)->pluck('name');
 
-    expect($noms)->toContain('ECOLE_ADMIN', 'SCOLARITE', 'PROF', 'COMPTABLE', 'SECRETAIRE')
-        ->and($noms)->toHaveCount(5);
+    expect($noms)->toContain('ECOLE_ADMIN', 'SCOLARITE', 'PROF', 'COMPTABLE', 'SECRETAIRE', 'PARENT', 'ELEVE')
+        ->and($noms)->toHaveCount(7);
 });
 
 it('est idempotente : une seconde exécution ne crée aucun doublon', function () {
@@ -41,5 +41,5 @@ it('est idempotente : une seconde exécution ne crée aucun doublon', function (
     Artisan::call('app:sync-roles-defaut');
     Artisan::call('app:sync-roles-defaut');
 
-    expect(Role::where('team_id', $etablissement->id)->count())->toBe(5);
+    expect(Role::where('team_id', $etablissement->id)->count())->toBe(7);
 });

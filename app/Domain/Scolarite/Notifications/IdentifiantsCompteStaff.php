@@ -38,6 +38,8 @@ class IdentifiantsCompteStaff extends Notification implements ShouldQueue
             'PROF' => 'Professeur',
             'COMPTABLE' => 'Comptable',
             'SECRETAIRE' => 'Secrétaire',
+            'PARENT' => 'Parent',
+            'ELEVE' => 'Élève',
             default => 'Scolarité',
         };
 

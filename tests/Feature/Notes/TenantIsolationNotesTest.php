@@ -84,11 +84,12 @@ it('ne retourne jamais les notes d’un autre tenant même en forçant son eleve
 
     expect(collect($reponseA->json('data'))->pluck('id'))->toContain($a['note']->id);
 
-    // Même en passant l'eleve_id de B, le TenantScope empêche de voir ses notes
-    // depuis le contexte tenant A.
+    // Même en passant l'eleve_id de B : le TenantScope le rend introuvable
+    // pour le contexte tenant A (ElevePolicy::view via findOrFail, cf. Session
+    // 14 (2/2) — même garde-fou que FactureController::index) → 404, pas une
+    // liste vide qui laisserait deviner que l'élève existe ailleurs.
     $this->getJson("http://ecole-notes-a.plateforme.sn.localhost/api/v1/notes?eleve_id={$b['eleve']->id}")
-        ->assertOk()
-        ->assertJsonCount(0, 'data');
+        ->assertNotFound();
 });
 
 it('bloque le téléchargement du bulletin PDF d’un autre tenant avec un 404, pas une fuite', function () {
