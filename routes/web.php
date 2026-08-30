@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Notes\Livewire\NotesSaisie;
 use App\Domain\Scolarite\Livewire\AbsenceSaisie;
 use App\Domain\Scolarite\Livewire\ClassesListe;
 use App\Domain\Scolarite\Livewire\EleveForm;
@@ -21,6 +22,8 @@ Route::middleware(['auth', 'resolve.tenant', 'role:ECOLE_ADMIN,SCOLARITE,PROF'])
     Route::get('/classes', ClassesListe::class)->name('scolarite.classes.index');
 
     Route::get('/absences/saisie', AbsenceSaisie::class)->name('scolarite.absences.saisie');
+
+    Route::get('/notes/saisie', NotesSaisie::class)->name('notes.saisie');
 });
 
 require __DIR__.'/admin.php';

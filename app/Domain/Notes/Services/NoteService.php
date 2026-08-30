@@ -23,6 +23,17 @@ class NoteService
         ]));
     }
 
+    public function update(Note $note, array $data): Note
+    {
+        // Seules la valeur, l'appréciation, le coefficient et le type peuvent être
+        // corrigés : eleve_id/matiere_id/trimestre_id/tenant_id/saisie_par restent
+        // figés une fois la note créée, même si $data en contient (cf. create()).
+        $note->fill(array_intersect_key($data, array_flip(['valeur', 'appreciation', 'coefficient', 'type'])));
+        $note->save();
+
+        return $note;
+    }
+
     public function pourEleve(string $eleveId, ?string $matiereId = null, ?string $trimestreId = null): Collection
     {
         return Note::where('eleve_id', $eleveId)

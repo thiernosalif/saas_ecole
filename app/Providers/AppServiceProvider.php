@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Domain\Notes\Livewire\NotesSaisie;
 use App\Domain\Scolarite\Livewire\AbsenceSaisie;
 use App\Domain\Scolarite\Livewire\ClassesListe;
 use App\Domain\Scolarite\Livewire\EleveForm;
@@ -40,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('eleve-form', EleveForm::class);
         Livewire::component('classes-liste', ClassesListe::class);
         Livewire::component('absence-saisie', AbsenceSaisie::class);
+        Livewire::component('notes-saisie', NotesSaisie::class);
 
         Livewire::component('admin-ecoles-liste', EcolesListe::class);
         Livewire::component('admin-ecole-detail', EcoleDetail::class);
