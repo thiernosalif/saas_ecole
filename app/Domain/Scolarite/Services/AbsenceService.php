@@ -12,6 +12,11 @@ class AbsenceService
 {
     public function create(array $data, ?string $saisiePar): Absence
     {
+        // tenant_id n'est jamais accepté depuis l'appelant : seul le
+        // TenantScope/BelongsToTenant (via currentTenantId) doit le fixer,
+        // sinon un tenant_id injecté dans $data écraserait le tenant courant.
+        unset($data['tenant_id']);
+
         return DB::transaction(fn () => Absence::create([
             ...$data,
             'saisie_par' => $data['saisie_par'] ?? $saisiePar,
