@@ -49,6 +49,12 @@ class FortifyServiceProvider extends ServiceProvider
                 return null;
             }
 
+            // Compte staff désactivé (personne.actif = false, cf. CompteUtilisateurService::desactiver) :
+            // le User est conservé pour l'audit trail mais ne doit plus pouvoir se connecter.
+            if ($user->personne && ! $user->personne->actif) {
+                return null;
+            }
+
             // Sur admin.plateforme.sn, resolve.tenant.or.platform ne lie jamais
             // currentTenantId (§15.6, pas d'école courante) : seul un compte
             // SUPER_ADMIN (tenant_id null) peut s'authentifier sur ce domaine.

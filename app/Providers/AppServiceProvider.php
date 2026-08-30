@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Domain\Notes\Livewire\NotesSaisie;
 use App\Domain\Scolarite\Livewire\AbsenceSaisie;
 use App\Domain\Scolarite\Livewire\ClassesListe;
+use App\Domain\Scolarite\Livewire\ComptesListe;
 use App\Domain\Scolarite\Livewire\EleveForm;
 use App\Domain\Scolarite\Livewire\ElevesListe;
 use App\Domain\SuperAdmin\Livewire\AnalyticsDashboard;
@@ -42,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('classes-liste', ClassesListe::class);
         Livewire::component('absence-saisie', AbsenceSaisie::class);
         Livewire::component('notes-saisie', NotesSaisie::class);
+        Livewire::component('comptes-liste', ComptesListe::class);
 
         Livewire::component('admin-ecoles-liste', EcolesListe::class);
         Livewire::component('admin-ecole-detail', EcoleDetail::class);
@@ -69,6 +71,6 @@ class AppServiceProvider extends ServiceProvider
             ->middleware(['web', 'auth', 'platform.team']));
 
         Livewire::setUpdateRoute(fn ($handle) => Route::post('/livewire/update', $handle)
-            ->middleware(['web', 'auth', 'resolve.tenant']));
+            ->middleware(['web', 'auth', 'resolve.tenant', 'user.actif']));
     }
 }

@@ -3,8 +3,6 @@
 use App\Domain\Comptabilite\Http\Controllers\FactureController;
 use App\Domain\Comptabilite\Http\Controllers\ReglementController;
 use App\Domain\Comptabilite\Http\Controllers\WebhookController;
-use App\Domain\SuperAdmin\Http\Controllers\WebhookController as AbonnementWebhookController;
-use App\Domain\SuperAdmin\Models\Etablissement;
 use App\Domain\Notes\Http\Controllers\BulletinController;
 use App\Domain\Notes\Http\Controllers\NoteController;
 use App\Domain\Planning\Http\Controllers\DevoirController;
@@ -12,8 +10,11 @@ use App\Domain\Planning\Http\Controllers\EmploiDuTempsController;
 use App\Domain\Planning\Http\Controllers\ExamenController;
 use App\Domain\Scolarite\Http\Controllers\AbsenceController;
 use App\Domain\Scolarite\Http\Controllers\ClasseController;
+use App\Domain\Scolarite\Http\Controllers\CompteUtilisateurController;
 use App\Domain\Scolarite\Http\Controllers\EleveController;
 use App\Domain\Scolarite\Http\Controllers\InscriptionController;
+use App\Domain\SuperAdmin\Http\Controllers\WebhookController as AbonnementWebhookController;
+use App\Domain\SuperAdmin\Models\Etablissement;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/auth.php';
 
-Route::middleware(['auth:sanctum', 'resolve.tenant'])->prefix('v1')->group(function () {
+Route::middleware(['auth:sanctum', 'resolve.tenant', 'user.actif'])->prefix('v1')->group(function () {
     // ->parameters(...) : le singulariseur de Laravel transforme "eleves" en
     // "elefe" (heuristique anglaise -ves → -fe, cf. leaves/leaf), on force
     // donc explicitement le nom du paramètre de route à "eleve".
@@ -70,6 +71,13 @@ Route::middleware(['auth:sanctum', 'resolve.tenant'])->prefix('v1')->group(funct
     // 404/500 (cf. tests Session 11).
     Route::post('factures/{facture}/paiement-mobile', [ReglementController::class, 'payerEnLigne'])
         ->middleware('module:'.Etablissement::MODULE_PAIEMENT_MOBILE_MONEY);
+
+    // Comptes staff (PROF, SCOLARITE) : pas d'apiResource ("désactiver" n'est pas un
+    // destroy, cf. CompteUtilisateurService::desactiver — jamais de suppression dure).
+    Route::get('comptes', [CompteUtilisateurController::class, 'index']);
+    Route::post('comptes', [CompteUtilisateurController::class, 'store']);
+    Route::get('comptes/{compte}', [CompteUtilisateurController::class, 'show']);
+    Route::patch('comptes/{compte}/desactiver', [CompteUtilisateurController::class, 'desactiver']);
 });
 
 // Webhooks Wave/Orange Money : hors du groupe ci-dessus — le provider n'est
