@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace App\Domain\Comptabilite\Http\Controllers;
 
+use App\Domain\Comptabilite\Http\Requests\InitierPaiementEnLigneRequest;
 use App\Domain\Comptabilite\Http\Requests\StoreReglementManuelRequest;
 use App\Domain\Comptabilite\Http\Resources\ReglementResource;
 use App\Domain\Comptabilite\Models\Facture;
 use App\Domain\Comptabilite\Models\Reglement;
+use App\Domain\Comptabilite\Services\Paiement\PaiementService;
 use App\Domain\Comptabilite\Services\ReglementService;
 use App\Http\Controllers\Controller;
 
 class ReglementController extends Controller
 {
-    public function __construct(private readonly ReglementService $reglements) {}
+    public function __construct(
+        private readonly ReglementService $reglements,
+        private readonly PaiementService $paiements,
+    ) {}
 
     public function index(Facture $facture)
     {
@@ -39,5 +44,25 @@ class ReglementController extends Controller
         $reglement = $this->reglements->enregistrerPaiementManuel($facture, $request->validated());
 
         return ReglementResource::make($reglement)->response()->setStatusCode(201);
+    }
+
+    /**
+     * Initiation d'un paiement en ligne (Wave/Orange Money) — route gardée
+     * par le middleware `module:paiement_mobile_money` (routes/api.php),
+     * l'école doit avoir activé le module. La confirmation arrive plus tard
+     * via WebhookController, pas ici.
+     */
+    public function payerEnLigne(InitierPaiementEnLigneRequest $request, Facture $facture)
+    {
+        $resultat = $this->paiements->initier(
+            $facture,
+            $request->validated('moyen_paiement'),
+            $request->validated(),
+        );
+
+        return ReglementResource::make($resultat['reglement'])
+            ->additional(['url_paiement' => $resultat['url_paiement']])
+            ->response()
+            ->setStatusCode(201);
     }
 }

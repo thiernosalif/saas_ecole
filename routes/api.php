@@ -2,6 +2,8 @@
 
 use App\Domain\Comptabilite\Http\Controllers\FactureController;
 use App\Domain\Comptabilite\Http\Controllers\ReglementController;
+use App\Domain\Comptabilite\Http\Controllers\WebhookController;
+use App\Domain\SuperAdmin\Models\Etablissement;
 use App\Domain\Notes\Http\Controllers\BulletinController;
 use App\Domain\Notes\Http\Controllers\NoteController;
 use App\Domain\Planning\Http\Controllers\DevoirController;
@@ -58,9 +60,19 @@ Route::middleware(['auth:sanctum', 'resolve.tenant'])->prefix('v1')->group(funct
     Route::apiResource('devoirs', DevoirController::class)->only(['index', 'show', 'store', 'update']);
 
     // Module Comptabilite (cf. PROJET_LARAVEL.md §4.2, Session 11) : chemin
-    // par défaut espèces/chèque/virement, aucune dépendance externe. Le
-    // paiement en ligne (Wave/Orange Money, module `paiement_mobile_money`)
-    // a ses propres routes, ajoutées séparément une fois le webhook conçu.
+    // par défaut espèces/chèque/virement, aucune dépendance externe.
     Route::apiResource('factures', FactureController::class)->only(['index', 'show', 'store']);
     Route::apiResource('factures.reglements', ReglementController::class)->shallow()->only(['index', 'show', 'store']);
+
+    // Paiement en ligne (Wave/Orange Money) : module optionnel, gardé par
+    // `module:...` — une école qui ne l'a pas activé reçoit un 403, pas un
+    // 404/500 (cf. tests Session 11).
+    Route::post('factures/{facture}/paiement-mobile', [ReglementController::class, 'payerEnLigne'])
+        ->middleware('module:'.Etablissement::MODULE_PAIEMENT_MOBILE_MONEY);
 });
+
+// Webhooks Wave/Orange Money : hors du groupe ci-dessus — le provider n'est
+// pas un tenant résolu par sous-domaine, l'authentification se fait par
+// signature (WebhookSignatureVerifier), pas par session/token Sanctum.
+Route::post('webhooks/wave', [WebhookController::class, 'wave']);
+Route::post('webhooks/orange-money', [WebhookController::class, 'orangeMoney']);

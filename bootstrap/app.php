@@ -2,6 +2,7 @@
 
 use App\Domain\SuperAdmin\Console\Commands\CheckAbonnementsCommand;
 use App\Domain\SuperAdmin\Http\Middleware\EnsurePlatformTeam;
+use App\Http\Middleware\EnsureModuleActif;
 use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\ResolveTenant;
 use App\Http\Middleware\ResolveTenantOrPlatformTeam;
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => EnsureRole::class,
             'platform.team' => EnsurePlatformTeam::class,
             'resolve.tenant.or.platform' => ResolveTenantOrPlatformTeam::class,
+            'module' => EnsureModuleActif::class,
         ]);
 
         // Sans ceci, SubstituteBindings (résolution des {eleve}, {classe}, ...)
