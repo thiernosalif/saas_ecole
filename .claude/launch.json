@@ -1,0 +1,20 @@
+{
+    "version": "0.0.1",
+    "configurations": [
+        {
+            "name": "saas-ecole-web",
+            "runtimeExecutable": "env",
+            "runtimeArgs": [
+                "CACHE_STORE=file",
+                "QUEUE_CONNECTION=sync",
+                "SESSION_DRIVER=file",
+                "php",
+                "artisan",
+                "serve",
+                "--port=8000"
+            ],
+            "port": 8000,
+            "url": "http://demo.plateforme.sn.localhost:8000"
+        }
+    ]
+}
