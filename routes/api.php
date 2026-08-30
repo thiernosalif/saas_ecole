@@ -3,6 +3,7 @@
 use App\Domain\Comptabilite\Http\Controllers\FactureController;
 use App\Domain\Comptabilite\Http\Controllers\ReglementController;
 use App\Domain\Comptabilite\Http\Controllers\WebhookController;
+use App\Domain\SuperAdmin\Http\Controllers\WebhookController as AbonnementWebhookController;
 use App\Domain\SuperAdmin\Models\Etablissement;
 use App\Domain\Notes\Http\Controllers\BulletinController;
 use App\Domain\Notes\Http\Controllers\NoteController;
@@ -76,3 +77,9 @@ Route::middleware(['auth:sanctum', 'resolve.tenant'])->prefix('v1')->group(funct
 // signature (WebhookSignatureVerifier), pas par session/token Sanctum.
 Route::post('webhooks/wave', [WebhookController::class, 'wave']);
 Route::post('webhooks/orange-money', [WebhookController::class, 'orangeMoney']);
+
+// Idem pour l'abonnement plateforme d'une école (Session 13) — table
+// `reglement_saas`, pas `reglement` : préfixe distinct plutôt que de faire
+// deviner au webhook, à partir de la seule `reference`, quelle table verrouiller.
+Route::post('webhooks-saas/wave', [AbonnementWebhookController::class, 'wave']);
+Route::post('webhooks-saas/orange-money', [AbonnementWebhookController::class, 'orangeMoney']);

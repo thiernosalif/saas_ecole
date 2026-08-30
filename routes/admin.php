@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\SuperAdmin\Http\Controllers\AbonnementController;
 use App\Domain\SuperAdmin\Http\Controllers\AccesController;
 use App\Domain\SuperAdmin\Http\Controllers\AnalyticsController;
 use App\Domain\SuperAdmin\Http\Controllers\EcoleController;
@@ -28,6 +29,12 @@ Route::domain(config('app.admin_subdomain'))
 
         Route::put('ecoles/{etablissement}/personnalisation', [PersonnalisationController::class, 'update'])->name('ecoles.personnalisation.update');
         Route::post('ecoles/{etablissement}/logo', [PersonnalisationController::class, 'uploaderLogo'])->name('ecoles.logo.upload');
+
+        Route::get('abonnements/plans', [AbonnementController::class, 'plans'])->name('abonnements.plans');
+        Route::post('ecoles/{etablissement}/abonnement/plan', [AbonnementController::class, 'changerPlan'])->name('ecoles.abonnement.plan');
+        Route::post('ecoles/{etablissement}/abonnement/annuler', [AbonnementController::class, 'annuler'])->name('ecoles.abonnement.annuler');
+        Route::post('ecoles/{etablissement}/abonnement/payer', [AbonnementController::class, 'payer'])->name('ecoles.abonnement.payer');
+        Route::get('ecoles/{etablissement}/abonnement/historique', [AbonnementController::class, 'historique'])->name('ecoles.abonnement.historique');
 
         Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
     });

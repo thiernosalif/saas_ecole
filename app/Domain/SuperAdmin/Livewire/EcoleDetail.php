@@ -7,6 +7,7 @@ namespace App\Domain\SuperAdmin\Livewire;
 use App\Domain\Scolarite\Models\Personne;
 use App\Domain\SuperAdmin\Models\Etablissement;
 use App\Domain\SuperAdmin\Models\PlanTarifaire;
+use App\Domain\SuperAdmin\Services\AbonnementService;
 use App\Domain\SuperAdmin\Services\AccesService;
 use App\Domain\SuperAdmin\Services\EcoleService;
 use App\Domain\SuperAdmin\Services\PersonnalisationService;
@@ -150,6 +151,20 @@ class EcoleDetail extends Component
         session()->flash('success', 'Abonnement mis à jour.');
     }
 
+    /**
+     * Paiement en ligne de l'échéance du mois courant (Session 13) — génère
+     * la ligne reglement_saas si besoin puis redirige vers Wave/Orange Money.
+     * La confirmation arrive plus tard via SuperAdmin\Http\Controllers\WebhookController,
+     * pas ici.
+     */
+    public function payerEnLigne(string $moyen, AbonnementService $abonnements): void
+    {
+        $reglement = $abonnements->genererEcheanceCourante($this->etablissement->load('plan'));
+        $resultat = $abonnements->initierPaiement($reglement, $moyen);
+
+        $this->redirect($resultat['url_paiement']);
+    }
+
     public function confirmSuspend(): void
     {
         $this->motifSuspension = '';
@@ -226,6 +241,9 @@ class EcoleDetail extends Component
         return view('livewire.admin.ecole-detail', [
             'plans' => PlanTarifaire::orderBy('prix_mensuel')->get(),
             'reglements' => $this->etablissement->reglementsSaas()->orderByDesc('mois')->limit(6)->get(),
+            'echeanceCourante' => $this->etablissement->reglementsSaas()
+                ->where('mois', now()->format('Y-m'))
+                ->first(),
             'nbElevesActuel' => Personne::withoutTenant()->eleves()
                 ->where('tenant_id', $this->etablissement->tenant_id)
                 ->count(),

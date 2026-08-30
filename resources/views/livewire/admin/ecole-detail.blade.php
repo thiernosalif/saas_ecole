@@ -116,6 +116,32 @@
             <flux:button type="submit" variant="filled">Enregistrer</flux:button>
         </form>
 
+        @if ($etablissement->plan)
+            <div class="mt-8 max-w-lg rounded-xl border border-zinc-200 bg-white p-4">
+                <h2 class="mb-2 text-sm font-semibold text-zinc-800">Échéance courante ({{ now()->format('Y-m') }})</h2>
+
+                @if ($echeanceCourante)
+                    <p class="text-sm text-zinc-600">
+                        {{ number_format((float) $echeanceCourante->montant, 0, ',', ' ') }} FCFA —
+                        <span @class([
+                            'font-medium',
+                            'text-emerald-600' => $echeanceCourante->statut === \App\Domain\SuperAdmin\Models\ReglementSaas::STATUT_PAYE,
+                            'text-amber-600' => $echeanceCourante->statut === \App\Domain\SuperAdmin\Models\ReglementSaas::STATUT_EN_ATTENTE,
+                        ])>{{ $echeanceCourante->statut }}</span>
+                    </p>
+                @else
+                    <p class="text-sm text-zinc-500">Aucune échéance générée pour ce mois.</p>
+                @endif
+
+                @if (! $echeanceCourante || $echeanceCourante->statut !== \App\Domain\SuperAdmin\Models\ReglementSaas::STATUT_PAYE)
+                    <div class="mt-3 flex gap-2">
+                        <flux:button type="button" wire:click="payerEnLigne('WAVE')" variant="filled" size="sm">Payer par Wave</flux:button>
+                        <flux:button type="button" wire:click="payerEnLigne('ORANGE_MONEY')" variant="filled" size="sm">Payer par Orange Money</flux:button>
+                    </div>
+                @endif
+            </div>
+        @endif
+
         <div class="mt-8 max-w-lg">
             <h2 class="mb-3 text-sm font-semibold text-zinc-800">Derniers règlements</h2>
 
