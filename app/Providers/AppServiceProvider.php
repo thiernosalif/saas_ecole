@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Domain\Notes\Livewire\NotesSaisie;
+use App\Domain\Planning\Livewire\EmploiDuTemps;
 use App\Domain\Scolarite\Livewire\AbsenceSaisie;
 use App\Domain\Scolarite\Livewire\ClassesListe;
 use App\Domain\Scolarite\Livewire\ComptesListe;
@@ -44,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('absence-saisie', AbsenceSaisie::class);
         Livewire::component('notes-saisie', NotesSaisie::class);
         Livewire::component('comptes-liste', ComptesListe::class);
+        Livewire::component('emploi-du-temps', EmploiDuTemps::class);
 
         Livewire::component('admin-ecoles-liste', EcolesListe::class);
         Livewire::component('admin-ecole-detail', EcoleDetail::class);

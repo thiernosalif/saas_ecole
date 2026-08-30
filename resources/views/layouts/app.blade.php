@@ -34,6 +34,13 @@
                         Absences
                     </a>
                 @endcan
+
+                @can('viewAny', \App\Domain\Planning\Models\Seance::class)
+                    <a href="{{ route('planning.emploi-du-temps.index') }}"
+                       class="block rounded-lg px-3 py-2 {{ request()->routeIs('planning.emploi-du-temps.*') ? 'bg-zinc-800/5 font-medium text-zinc-900' : 'text-zinc-600 hover:bg-zinc-800/5' }}">
+                        Emploi du temps
+                    </a>
+                @endcan
             </nav>
         </aside>
 
