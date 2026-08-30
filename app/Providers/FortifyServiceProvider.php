@@ -49,6 +49,13 @@ class FortifyServiceProvider extends ServiceProvider
                 return null;
             }
 
+            // Sur admin.plateforme.sn, resolve.tenant.or.platform ne lie jamais
+            // currentTenantId (§15.6, pas d'école courante) : seul un compte
+            // SUPER_ADMIN (tenant_id null) peut s'authentifier sur ce domaine.
+            if (! app()->bound('currentTenantId')) {
+                return $user->tenant_id === null ? $user : null;
+            }
+
             if ($user->tenant_id !== app('currentTenantId')) {
                 return null;
             }

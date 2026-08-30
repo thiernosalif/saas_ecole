@@ -101,7 +101,10 @@ return [
     |
     */
 
-    'middleware' => ['web', 'resolve.tenant'],
+    // 'resolve.tenant.or.platform' (§15.6) : ces routes sont partagées par tous les
+    // domaines (domain => null ci-dessus) — admin.plateforme.sn n'a pas d'etablissement
+    // "admin", donc resolve.tenant seul y ferait 404 avant même d'afficher /login.
+    'middleware' => ['web', 'resolve.tenant.or.platform'],
 
     /*
     |--------------------------------------------------------------------------

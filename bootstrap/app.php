@@ -4,6 +4,7 @@ use App\Domain\SuperAdmin\Console\Commands\CheckAbonnementsCommand;
 use App\Domain\SuperAdmin\Http\Middleware\EnsurePlatformTeam;
 use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\ResolveTenant;
+use App\Http\Middleware\ResolveTenantOrPlatformTeam;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'resolve.tenant' => ResolveTenant::class,
             'role' => EnsureRole::class,
             'platform.team' => EnsurePlatformTeam::class,
+            'resolve.tenant.or.platform' => ResolveTenantOrPlatformTeam::class,
         ]);
 
         // Sans ceci, SubstituteBindings (résolution des {eleve}, {classe}, ...)

@@ -10,7 +10,9 @@
 <body class="bg-zinc-50 text-zinc-900 antialiased">
     <div class="flex min-h-screen flex-col items-center justify-center px-4">
         <div class="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
-            <h1 class="mb-6 text-lg font-semibold text-zinc-800">Connexion à l'espace école</h1>
+            <h1 class="mb-6 text-lg font-semibold text-zinc-800">
+                {{ request()->getHost() === config('app.admin_subdomain') ? 'Connexion au portail Super Admin' : "Connexion à l'espace école" }}
+            </h1>
 
             @if ($errors->any())
                 <div class="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">

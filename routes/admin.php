@@ -4,11 +4,17 @@ use App\Domain\SuperAdmin\Http\Controllers\AccesController;
 use App\Domain\SuperAdmin\Http\Controllers\AnalyticsController;
 use App\Domain\SuperAdmin\Http\Controllers\EcoleController;
 use App\Domain\SuperAdmin\Http\Controllers\PersonnalisationController;
+use App\Domain\SuperAdmin\Livewire\AnalyticsDashboard;
+use App\Domain\SuperAdmin\Livewire\Communication;
+use App\Domain\SuperAdmin\Livewire\EcoleDetail;
+use App\Domain\SuperAdmin\Livewire\EcolesListe;
+use App\Domain\SuperAdmin\Livewire\Onboarding;
 use Illuminate\Support\Facades\Route;
 
 // Portail Super Admin (§15.6) : hors ResolveTenant (pas d'école courante),
 // gardé par platform.team (fixe le "team" spatie sur la plateforme) puis
-// role:SUPER_ADMIN. Ajout des pages Livewire prévu en Session 9.
+// role:SUPER_ADMIN. API JSON (consommée par le portail ou un futur client) sous
+// /admin/..., pages Livewire (Session 9) à la racine du domaine, cf. plus bas.
 Route::domain(config('app.admin_subdomain'))
     ->middleware(['auth', 'platform.team', 'role:SUPER_ADMIN'])
     ->prefix('admin')
@@ -24,4 +30,18 @@ Route::domain(config('app.admin_subdomain'))
         Route::post('ecoles/{etablissement}/logo', [PersonnalisationController::class, 'uploaderLogo'])->name('ecoles.logo.upload');
 
         Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
+    });
+
+// Portail Super Admin — pages Livewire full-page (§17, Session 9).
+Route::domain(config('app.admin_subdomain'))
+    ->middleware(['auth', 'platform.team', 'role:SUPER_ADMIN'])
+    ->name('admin.portail.')
+    ->group(function () {
+        Route::redirect('/', '/ecoles');
+
+        Route::get('/ecoles', EcolesListe::class)->name('ecoles.liste');
+        Route::get('/ecoles/{etablissement}', EcoleDetail::class)->name('ecoles.detail');
+        Route::get('/onboarding', Onboarding::class)->name('onboarding');
+        Route::get('/analytics', AnalyticsDashboard::class)->name('analytics');
+        Route::get('/communication', Communication::class)->name('communication');
     });
