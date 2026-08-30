@@ -56,6 +56,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Domaines de la plateforme multi-tenant
+    |--------------------------------------------------------------------------
+    |
+    | tenant_central_domain : suffixe commun à tous les sous-domaines d'école
+    | (https://{tenant}.{tenant_central_domain}, cf. ResolveTenant).
+    | admin_subdomain : domaine complet du portail Super Admin (§15.6),
+    | monté hors ResolveTenant via Route::domain().
+    |
+    */
+
+    'tenant_central_domain' => env('TENANT_CENTRAL_DOMAIN', 'plateforme.sn'),
+
+    'admin_subdomain' => env('ADMIN_SUBDOMAIN', 'admin.plateforme.sn'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

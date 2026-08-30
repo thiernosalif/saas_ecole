@@ -22,3 +22,5 @@ Route::middleware(['auth', 'resolve.tenant', 'role:ECOLE_ADMIN,SCOLARITE,PROF'])
 
     Route::get('/absences/saisie', AbsenceSaisie::class)->name('scolarite.absences.saisie');
 });
+
+require __DIR__.'/admin.php';

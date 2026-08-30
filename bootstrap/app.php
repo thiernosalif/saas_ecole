@@ -1,5 +1,7 @@
 <?php
 
+use App\Domain\SuperAdmin\Console\Commands\CheckAbonnementsCommand;
+use App\Domain\SuperAdmin\Http\Middleware\EnsurePlatformTeam;
 use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\ResolveTenant;
 use Illuminate\Foundation\Application;
@@ -14,10 +16,14 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withCommands([
+        CheckAbonnementsCommand::class,
+    ])
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'resolve.tenant' => ResolveTenant::class,
             'role' => EnsureRole::class,
+            'platform.team' => EnsurePlatformTeam::class,
         ]);
 
         // Sans ceci, SubstituteBindings (résolution des {eleve}, {classe}, ...)
