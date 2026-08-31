@@ -1,5 +1,7 @@
 <?php
 
+use App\Domain\Comptabilite\Livewire\FacturesListe;
+use App\Domain\Comptabilite\Livewire\ReglementForm;
 use App\Domain\Notes\Livewire\NotesSaisie;
 use App\Domain\Planning\Livewire\DevoirsListe;
 use App\Domain\Planning\Livewire\EmploiDuTemps;
@@ -34,6 +36,14 @@ Route::middleware(['auth', 'resolve.tenant', 'user.actif', 'role:ECOLE_ADMIN,SCO
     Route::get('/devoirs', DevoirsListe::class)->name('planning.devoirs.index');
 
     Route::get('/examens', ExamensListe::class)->name('planning.examens.index');
+});
+
+// Comptabilité : ECOLE_ADMIN/SCOLARITE/COMPTABLE uniquement (cf. FacturePolicy /
+// ReglementPolicy — COMPTABLE, ajouté en Session 14, doit pouvoir y accéder tout
+// comme ECOLE_ADMIN/SCOLARITE, sinon son rôle n'ouvre aucune porte).
+Route::middleware(['auth', 'resolve.tenant', 'user.actif', 'role:ECOLE_ADMIN,SCOLARITE,COMPTABLE'])->group(function () {
+    Route::get('/eleves/{eleve}/factures', FacturesListe::class)->name('comptabilite.factures.index');
+    Route::get('/factures/{facture}/reglements', ReglementForm::class)->name('comptabilite.reglements.index');
 });
 
 // Gestion des comptes staff (PROF, SCOLARITE) : pouvoir du directeur uniquement,

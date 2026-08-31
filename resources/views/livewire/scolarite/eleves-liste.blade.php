@@ -44,6 +44,15 @@
                         <td class="px-4 py-3 text-zinc-600">{{ $eleve->genre ?? '—' }}</td>
                         <td class="px-4 py-3">
                             <div class="flex justify-end gap-2">
+                                {{-- FacturePolicy::viewAny (pas ElevePolicy::view) : la route est gardée par
+                                     role:ECOLE_ADMIN,SCOLARITE,COMPTABLE, un PROF ne doit pas voir un lien qui
+                                     mène à un 403. --}}
+                                @can('viewAny', \App\Domain\Comptabilite\Models\Facture::class)
+                                    <flux:button :href="route('comptabilite.factures.index', $eleve)" variant="ghost" size="sm">
+                                        Factures
+                                    </flux:button>
+                                @endcan
+
                                 @can('update', $eleve)
                                     <flux:button :href="route('scolarite.eleves.edit', $eleve)" variant="ghost" size="sm">
                                         Modifier

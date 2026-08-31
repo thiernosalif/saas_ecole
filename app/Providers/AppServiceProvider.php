@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\Comptabilite\Livewire\FacturesListe;
+use App\Domain\Comptabilite\Livewire\ReglementForm;
 use App\Domain\Notes\Livewire\NotesSaisie;
 use App\Domain\Planning\Livewire\DevoirsListe;
 use App\Domain\Planning\Livewire\EmploiDuTemps;
@@ -50,6 +52,8 @@ class AppServiceProvider extends ServiceProvider
         Livewire::component('emploi-du-temps', EmploiDuTemps::class);
         Livewire::component('devoirs-liste', DevoirsListe::class);
         Livewire::component('examens-liste', ExamensListe::class);
+        Livewire::component('factures-liste', FacturesListe::class);
+        Livewire::component('reglement-form', ReglementForm::class);
 
         Livewire::component('admin-ecoles-liste', EcolesListe::class);
         Livewire::component('admin-ecole-detail', EcoleDetail::class);
